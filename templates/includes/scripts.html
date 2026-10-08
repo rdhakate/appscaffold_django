@@ -1,0 +1,96 @@
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const body = document.body;
+    
+    // Toggle sidebar collapse
+    sidebarToggle.addEventListener('click', function() {
+        body.classList.toggle('sidebar-toggled');
+        sidebar.classList.toggle('toggled');
+        
+        // Rotate the arrow icon
+        const icon = this.querySelector('i');
+        if (sidebar.classList.contains('toggled')) {
+            icon.classList.remove('fa-angle-left');
+            icon.classList.add('fa-angle-right');
+        } else {
+            icon.classList.remove('fa-angle-right');
+            icon.classList.add('fa-angle-left');
+        }
+        
+        localStorage.setItem('sidebarToggled', sidebar.classList.contains('toggled'));
+    });
+    
+    // Initialize sidebar state from localStorage
+    if (localStorage.getItem('sidebarToggled') === 'true') {
+        body.classList.add('sidebar-toggled');
+        sidebar.classList.add('toggled');
+        sidebarToggle.querySelector('i').classList.remove('fa-angle-left');
+        sidebarToggle.querySelector('i').classList.add('fa-angle-right');
+    }
+    
+    // Only allow one submenu open at a time
+    const collapseTriggers = document.querySelectorAll('[data-bs-toggle="collapse"]');
+    collapseTriggers.forEach(trigger => {
+        trigger.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-bs-target');
+            const target = document.querySelector(targetId);
+            
+            // Close all other open submenus
+            document.querySelectorAll('.collapse.show').forEach(openMenu => {
+                if (openMenu !== target) {
+                    const bsCollapse = bootstrap.Collapse.getInstance(openMenu);
+                    if (bsCollapse) {
+                        bsCollapse.hide();
+                        const trigger = openMenu.previousElementSibling;
+                        if (trigger && trigger.getAttribute('data-bs-toggle') === 'collapse') {
+                            const arrow = trigger.querySelector('.menu-arrow');
+                            if (arrow) {
+                                arrow.classList.remove('fa-angle-up');
+                                arrow.classList.add('fa-angle-down');
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Toggle arrow icon for current menu
+            const arrow = this.querySelector('.menu-arrow');
+            if (arrow) {
+                if (target.classList.contains('show')) {
+                    arrow.classList.remove('fa-angle-up');
+                    arrow.classList.add('fa-angle-down');
+                } else {
+                    arrow.classList.remove('fa-angle-down');
+                    arrow.classList.add('fa-angle-up');
+                }
+            }
+        });
+    });
+    
+    // Navbar dropdown text visibility
+    const userDropdown = document.getElementById('userDropdown');
+    if (userDropdown) {
+        const dropdownText = userDropdown.querySelector('.d-none.d-lg-inline');
+        
+        userDropdown.addEventListener('show.bs.dropdown', function() {
+            dropdownText.classList.add('d-lg-inline-block');
+        });
+        
+        userDropdown.addEventListener('hide.bs.dropdown', function() {
+            dropdownText.classList.remove('d-lg-inline-block');
+        });
+    }
+    
+    // Initialize DataTables
+    $('.datatable').DataTable({
+        responsive: true,
+        dom: '<"top"lf>rt<"bottom"ip><"clear">',
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search...",
+        }
+    });
+});
+</script>

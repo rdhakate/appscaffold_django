@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load render_table from django_tables2 %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Django Tables 2 with Ajax</h4>
+                <p class="card-subtitle mb-0">
+                    This sample implements server-side processing with Django Tables 2.
+                </p>
+            </div>
+            <div class="card-body">
+                {% render_table table %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
